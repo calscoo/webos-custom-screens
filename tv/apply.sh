@@ -3,21 +3,21 @@
 #   - the screensaver after idle on the home screen or in an app
 #   - the art on the "no signal" screen of HDMI inputs
 # Nothing in LG's files changes. Both screens are bind mounts, which "revert" removes.
-# Homebrew Channel runs this at every boot through /var/lib/webosbrew/init.d/50-photo-screensaver.
+# Homebrew Channel runs this at every boot through /var/lib/webosbrew/init.d/50-webos-custom-screens.
 #
 #   apply.sh          turn the photos on, or refresh them
 #   apply.sh revert   put LG's screens back
 
-BASE=/media/developer/photo-screensaver
+BASE=/media/developer/webos-custom-screens
 SAVER=/usr/palm/applications/com.webos.app.screensaver/qml/main.qml
 ART=/mnt/lg/appstore/preload/igallery/files/data/modernart
 SLOTS=$BASE/nosignal
-PIDFILE=/tmp/photo-screensaver-shuffle.pid
+PIDFILE=/tmp/webos-custom-screens-shuffle.pid
 
 # Removes this tool's mounts from $1, leaving anything another mod mounted there. During an
-# update the install folder is briefly named photo-screensaver.old, so that name is ours too.
+# update the install folder is briefly named webos-custom-screens.old, so that name is ours too.
 unmount_ours() {
-    while findmnt -n -o SOURCE "$1" 2>/dev/null | tail -n 1 | grep -qE "/photo-screensaver(\.[a-z]+)?/"; do
+    while findmnt -n -o SOURCE "$1" 2>/dev/null | tail -n 1 | grep -qE "/webos-custom-screens(\.[a-z]+)?/"; do
         umount "$1" || return 1
     done
 }
@@ -92,7 +92,7 @@ chmod -R a+rX "$SLOTS"
 mount --bind "$SLOTS" "$ART" || exit 1
 
 if [ "$shuffle" = yes ]; then
-    nohup /usr/bin/python3 "$BASE/shuffle.py" >/tmp/photo-screensaver-shuffle.log 2>&1 &
+    nohup /usr/bin/python3 "$BASE/shuffle.py" >/tmp/webos-custom-screens-shuffle.log 2>&1 &
     echo "[+] No-signal art: on, $count photos in a shuffled order"
 elif [ "$count" -gt 16 ]; then
     echo "[+] No-signal art: on, first 16 of $count photos in random order"

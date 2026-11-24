@@ -39,7 +39,7 @@ WebOSWindow {
 
     FolderListModel {
         id: photos
-        folder: "file:///media/developer/photo-screensaver/photos"
+        folder: "file:///media/developer/webos-custom-screens/photos"
         nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.JPG", "*.JPEG", "*.PNG"]
         showDirs: false
         showDotAndDotDot: false

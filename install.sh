@@ -80,7 +80,7 @@ value() { printf '%s\n' "$check" | sed -n "s/^$1=//p"; }
 for part in saver art; do
     mount_source=$(value "${part}_mount")
     case "$mount_source" in
-        "" | */photo-screensaver/* | */photo-screensaver.*) ;;
+        "" | */webos-custom-screens/* | */webos-custom-screens.*) ;;
         *) die "Another mod (like Aerial or Custom Screensaver) already replaces this TV's $( [ $part = saver ] && echo screensaver || echo no-signal art). Turn it off in that app first, then run this again." ;;
     esac
 done
@@ -208,7 +208,7 @@ SERVER_PID=$!
 sleep 1
 
 step "Sending to the TV..."
-result=$(tv_run "D=$TV_DIR; rm -rf \$D.new && mkdir -p \$D.new && wget -q -T 20 -O - http://$MY_IP:$PORT/bundle.tar | tar -x -o -C \$D.new && [ -f \$D.new/apply.sh ] && chmod -R a+rX \$D.new && chmod 755 \$D.new/apply.sh && rm -rf \$D.old && { [ ! -d \$D ] || mv \$D \$D.old; } && mv \$D.new \$D && mkdir -p ${TV_HOOK%/*} && printf '#!/bin/sh\nexec $TV_DIR/apply.sh\n' > $TV_HOOK && chmod 755 $TV_HOOK && \$D/apply.sh && rm -rf \$D.old && echo WPS_OK" 300)
+result=$(tv_run "D=$TV_DIR; rm -rf \$D.new && mkdir -p \$D.new && wget -q -T 20 -O - http://$MY_IP:$PORT/bundle.tar | tar -x -o -C \$D.new && [ -f \$D.new/apply.sh ] && chmod -R a+rX \$D.new && chmod 755 \$D.new/apply.sh && rm -rf \$D.old && { [ ! -d \$D ] || mv \$D \$D.old; } && mv \$D.new \$D && mkdir -p ${TV_HOOK%/*} && printf '#!/bin/sh\nexec $TV_DIR/apply.sh\n' > $TV_HOOK && chmod 755 $TV_HOOK && \$D/apply.sh && rm -rf \$D.old && echo WCS_OK" 300)
 
 printf '%s\n' "$result" | while IFS= read -r line; do
     case "$line" in
@@ -217,7 +217,7 @@ printf '%s\n' "$result" | while IFS= read -r line; do
         "[-] "*) warn "${line#\[-\] }" ;;
     esac
 done
-if ! printf '%s\n' "$result" | grep -qx WPS_OK; then
+if ! printf '%s\n' "$result" | grep -qx WCS_OK; then
     echo
     if ! printf '%s\n' "$result" | grep -q '^\[[+~-]\]'; then
         warn "The TV couldn't download the files from this computer ($MY_IP, port $PORT)."

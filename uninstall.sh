@@ -33,11 +33,11 @@ if [ -z "$ASKED_TV" ]; then
 fi
 
 step "Removing..."
-result=$(tv_run "D=$TV_DIR; if [ ! -d \$D ] && [ ! -f $TV_HOOK ]; then echo WPS_NONE; else if [ -x \$D/apply.sh ]; then \$D/apply.sh revert; fi; rm -f $TV_HOOK; rm -rf \$D \$D.new \$D.old; rm -f /tmp/photo-screensaver-shuffle.*; fi; echo WPS_OK")
+result=$(tv_run "D=$TV_DIR; if [ ! -d \$D ] && [ ! -f $TV_HOOK ]; then echo WCS_NONE; else if [ -x \$D/apply.sh ]; then \$D/apply.sh revert; fi; rm -f $TV_HOOK; rm -rf \$D \$D.new \$D.old; rm -f /tmp/webos-custom-screens-shuffle.*; fi; echo WCS_OK")
 
-if printf '%s\n' "$result" | grep -qx WPS_NONE; then
+if printf '%s\n' "$result" | grep -qx WCS_NONE; then
     ok "Nothing to remove: the photo screensaver isn't on this TV."
-elif printf '%s\n' "$result" | grep -qx WPS_OK; then
+elif printf '%s\n' "$result" | grep -qx WCS_OK; then
     ok "Removed. The TV shows LG's own screensaver and no-signal art again."
 else
     die "Couldn't finish removing it. Check that the TV is on and run ./uninstall.sh again."

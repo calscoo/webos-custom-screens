@@ -1,4 +1,4 @@
-# webOS Photo Screensaver
+# webOS Custom Screens
 
 Show your own photos on an LG TV instead of LG's built-in art.
 
@@ -110,8 +110,8 @@ For the curious:
 - **Screensaver:** LG's screensaver is a small app. The tool mounts its own slideshow over the app's main file (`/usr/palm/applications/com.webos.app.screensaver/qml/main.qml`) with a Linux bind mount. Nothing in LG's file changes.
 - **No-signal screen:** LG's HDMI input app shows the paintings `modernart_0.jpg` to `modernart_15.jpg` from `/mnt/lg/appstore/preload/igallery/files/data/modernart`, choosing one at random every 10 seconds. The tool mounts a folder of your photos over that folder under the same 16 names. The input app's own code can't be changed this way, because the TV restores it at startup from a snapshot made at the factory.
 - **Shuffle helper:** all 16 names point to one photo. When the input app opens a name, the helper (using the Linux kernel's file notifications) points all 16 names at the next photo in the order. Whichever name LG picks, it gets the next photo.
-- **Startup:** Homebrew Channel runs `/var/lib/webosbrew/init.d/50-photo-screensaver` at every startup, which turns everything back on.
-- **On the TV,** everything lives in `/media/developer/photo-screensaver`.
+- **Startup:** Homebrew Channel runs `/var/lib/webosbrew/init.d/50-webos-custom-screens` at every startup, which turns everything back on.
+- **On the TV,** everything lives in `/media/developer/webos-custom-screens`.
 
 ## License
 

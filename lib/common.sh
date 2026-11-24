@@ -4,9 +4,9 @@
 
 # Used by install.sh and uninstall.sh
 # shellcheck disable=SC2034
-TV_DIR=/media/developer/photo-screensaver
+TV_DIR=/media/developer/webos-custom-screens
 # shellcheck disable=SC2034
-TV_HOOK=/var/lib/webosbrew/init.d/50-photo-screensaver
+TV_HOOK=/var/lib/webosbrew/init.d/50-webos-custom-screens
 # shellcheck disable=SC2034
 TESTED_WEBOS_MAJOR=8 # webOS 23
 
@@ -53,14 +53,14 @@ tv_run() {
     local line="" out=""
     exec 3<>"/dev/tcp/$TV/23" || return 1
     # The markers are split with "" so the TV's echo of the command line never matches them
-    printf 'echo __WPS_""BEGIN__; %s; echo __WPS_""END__; exit\n' "$1" >&3
+    printf 'echo __WCS_""BEGIN__; %s; echo __WCS_""END__; exit\n' "$1" >&3
     while IFS= read -r -t "${2:-30}" line <&3; do
         out+="$line"$'\n'
     done
     out+="$line"
     exec 3<&-
     printf '%s\n' "$out" | LC_ALL=C tr -cd '\11\12\40-\176' |
-        sed -n '/^__WPS_BEGIN__$/,/^__WPS_END__$/p' | sed '1d;$d'
+        sed -n '/^__WCS_BEGIN__$/,/^__WCS_END__$/p' | sed '1d;$d'
 }
 
 # This computer's address on the route to $1

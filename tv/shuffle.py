@@ -16,9 +16,9 @@ import select
 import struct
 import sys
 
-BASE = "/media/developer/photo-screensaver"
+BASE = "/media/developer/webos-custom-screens"
 SLOTS = BASE + "/nosignal"
-PIDFILE = "/tmp/photo-screensaver-shuffle.pid"
+PIDFILE = "/tmp/webos-custom-screens-shuffle.pid"
 NUM_SLOTS = 16
 IN_OPEN = 0x20
 IN_CLOSE_NOWRITE = 0x10
