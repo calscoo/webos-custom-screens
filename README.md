@@ -23,7 +23,7 @@ You need:
 ## Install
 
 1. **Download this project.** Click the green **Code** button at the top of this page, then **Download ZIP**, and unzip it.
-2. **Add your pictures.** Put your photos in the `photos` folder, and your logo in the `logo` folder. JPG, PNG, HEIC, WebP, and TIFF all work. To try it out first, skip this step: the installer uses the sample pictures in the `samples` folder while a folder is empty.
+2. **Add your pictures.** Put your photos in the `photos` folder. They show on the screensaver and the no-signal screen. Put your logo in the `logo` folder. It shows on the power-off screen. JPG, PNG, HEIC, WebP, and TIFF all work. To try it out first, skip this step: the installer uses the sample pictures in the `samples` folder while a folder is empty.
 3. **Open Terminal.** On a Mac, press Cmd+Space, type `Terminal`, and press Return.
 4. **Go to the project folder.** Type `cd ` (with a space after it), drag the project folder onto the Terminal window, and press Return.
 5. **Run the installer:**
@@ -61,14 +61,14 @@ This puts LG's screensaver, no-signal art, and power-off logo back, and removes 
 
 | Command | What it does |
 | --- | --- |
-| `./install.sh ~/Pictures/tv` | Use photos from another folder |
+| `./install.sh ~/Pictures/tv` | Use the photos in another folder instead of the `photos` folder. The logo still comes from the `logo` folder. |
 | `./install.sh --logo ~/Pictures/logo.png` | Use this picture on the power-off screen |
 | `./install.sh --no-logo` | Keep LG's power-off logo |
 | `./install.sh --no-shuffle` | Leave out the shuffle helper (see below) |
 | `./install.sh --tv 192.168.1.50` | Use this TV address and skip the search |
 | `./uninstall.sh --tv 192.168.1.50` | Same, for uninstalling |
 
-You can combine them, for example `./install.sh ~/Pictures/tv --no-logo`.
+You can combine them, for example `./install.sh ~/Pictures/tv --logo ~/Pictures/logo.png`.
 
 ## Picture tips
 

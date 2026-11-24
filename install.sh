@@ -3,7 +3,7 @@
 # screen, and a logo on the power-off screen. Run it again any time to update them.
 #
 #   ./install.sh                    use the photos and logo folders (samples when they're empty)
-#   ./install.sh ~/Pictures/tv      use the photos in another folder
+#   ./install.sh ~/Pictures/tv      use the photos in another folder (the logo stays the same)
 #   ./install.sh --logo ~/me.png    use this picture as the power-off logo
 #   ./install.sh --no-logo          keep LG's power-off logo
 #   ./install.sh --no-shuffle       leave out the shuffle helper (see README)
