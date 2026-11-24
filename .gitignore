@@ -1,6 +1,3 @@
-# Resized photos and the bundle sent to the TV
+# Resized pictures and the bundle sent to the TV
 .build/
-# Your photos stay on your computer
-photos/*
-!photos/README.txt
 .DS_Store
