@@ -80,7 +80,8 @@ scan_network() {
     (
         for i in $(seq 1 254); do
             for port in 23 3000 3001; do
-                ( (exec 3<>"/dev/tcp/$1.$i/$port") && : >"$tmp/$1.$i $port" ) &
+                # One process per address, so the kill below stops connections that hang
+                (exec 3<>"/dev/tcp/$1.$i/$port" && : >"$tmp/$1.$i $port") >/dev/null &
             done
         done
         sleep 3
