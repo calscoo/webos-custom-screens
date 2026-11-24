@@ -29,16 +29,16 @@ done
 ASKED_TV=$TV
 find_tv
 if [ -z "$ASKED_TV" ]; then
-    ask "Remove the photo screensaver from this TV?" Y || exit 0
+    ask "Put LG's screens back on this TV?" Y || exit 0
 fi
 
 step "Removing..."
 result=$(tv_run "D=$TV_DIR; if [ ! -d \$D ] && [ ! -f $TV_HOOK ]; then echo WCS_NONE; else if [ -x \$D/apply.sh ]; then \$D/apply.sh revert; fi; rm -f $TV_HOOK; rm -rf \$D \$D.new \$D.old; rm -f /tmp/webos-custom-screens-shuffle.*; fi; echo WCS_OK")
 
 if printf '%s\n' "$result" | grep -qx WCS_NONE; then
-    ok "Nothing to remove: the photo screensaver isn't on this TV."
+    ok "Nothing to remove: webos-custom-screens isn't on this TV."
 elif printf '%s\n' "$result" | grep -qx WCS_OK; then
-    ok "Removed. The TV shows LG's own screensaver and no-signal art again."
+    ok "Removed. The TV shows LG's own screensaver, no-signal art, and power-off logo again."
 else
     die "Couldn't finish removing it. Check that the TV is on and run ./uninstall.sh again."
 fi
