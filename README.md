@@ -23,18 +23,43 @@ You need:
 ## Install
 
 1. **Download this project.** Click the green **Code** button at the top of this page, then **Download ZIP**, and unzip it.
-2. **Add your pictures.** Put your photos in the `photos` folder. They show on the screensaver and the no-signal screen. Put your logo in the `logo` folder. It shows on the power-off screen. JPG, PNG, HEIC, WebP, and TIFF all work. To try it out first, skip this step: the installer uses the sample pictures in the `samples` folder while a folder is empty.
-3. **Open Terminal.** On a Mac, press Cmd+Space, type `Terminal`, and press Return.
-4. **Go to the project folder.** Type `cd ` (with a space after it), drag the project folder onto the Terminal window, and press Return.
-5. **Run the installer:**
+2. **Open Terminal.** On a Mac, press Cmd+Space, type `Terminal`, and press Return.
+3. **Go to the project folder.** Type `cd ` (with a space after it), drag the project folder onto the Terminal window, and press Return.
+4. **Run the installer:**
 
    ```
    ./install.sh
    ```
 
-The installer finds your TV on the network, asks you to confirm it, prepares your pictures, and sends them to the TV. That's it.
+The installer tells you what it's doing at each step and asks before it continues. It finds your TV on the network, prepares the pictures, and sends them to the TV.
 
-To see your pictures right away, switch the TV to an HDMI input with nothing plugged in, or turn the TV off with the remote.
+Out of the box, it uses this project's own pictures: the photos in the `screensaver` folder and `logo.png`. That way you can see it working before you pick your own. To see them, switch the TV to an HDMI input with nothing plugged in, or turn the TV off with the remote.
+
+## Use your own pictures
+
+Your photos on the screensaver and the no-signal screen:
+
+```
+./install.sh --screensaver ~/Pictures/tv
+```
+
+Your logo, or any picture, on the power-off screen:
+
+```
+./install.sh --logo ~/Pictures/logo.png
+```
+
+Both at once:
+
+```
+./install.sh --screensaver ~/Pictures/tv --logo ~/Pictures/logo.png
+```
+
+Each option changes only its own screen. The other screen stays as it is on the TV. JPG, PNG, HEIC, WebP, and TIFF all work.
+
+**Tip:** type the command up to the space after `--screensaver` or `--logo`, then drag your folder or picture onto the Terminal window. Terminal fills in its location for you.
+
+To change your photos later, run the same command again.
 
 ## Turn a screen on or off
 
@@ -44,10 +69,6 @@ LG has a setting for the no-signal screen and one for the power-off logo. Both a
 - **Show LG logo when turning off the TV** for the power-off screen
 
 When one is off, the TV skips that screen, so your pictures don't show there either.
-
-## Change your pictures
-
-Add or remove photos in the `photos` folder, or swap the picture in the `logo` folder, then run `./install.sh` again.
 
 ## Uninstall
 
@@ -59,16 +80,18 @@ This puts LG's screensaver, no-signal art, and power-off logo back, and removes 
 
 ## Options
 
-| Command | What it does |
-| --- | --- |
-| `./install.sh ~/Pictures/tv` | Use the photos in another folder instead of the `photos` folder. The logo still comes from the `logo` folder. |
-| `./install.sh --logo ~/Pictures/logo.png` | Use this picture on the power-off screen |
-| `./install.sh --no-logo` | Keep LG's power-off logo |
-| `./install.sh --no-shuffle` | Leave out the shuffle helper (see below) |
-| `./install.sh --tv 192.168.1.50` | Use this TV address and skip the search |
-| `./uninstall.sh --tv 192.168.1.50` | Same, for uninstalling |
+Mix and match any of these. Run `./install.sh --help` to see them in Terminal.
 
-You can combine them, for example `./install.sh ~/Pictures/tv --logo ~/Pictures/logo.png`.
+| Option | What it does |
+| --- | --- |
+| `--screensaver [FOLDER]` | Change only the screensaver and the no-signal screen. Uses the photos in FOLDER, or this project's `screensaver` folder when you leave FOLDER out. |
+| `--logo [FILE]` | Change only the power-off logo. Uses the picture FILE, or this project's `logo.png` when you leave FILE out. |
+| `--no-shuffle` | Leave out the shuffle helper (see below) |
+| `--tv ADDRESS` | Use the TV at this address and skip the search |
+| `--non-interactive` | Answer yes to every question. Needs `--tv` when the search finds more than one TV. |
+| `--help` | Show the options |
+
+With neither `--screensaver` nor `--logo`, both screens get this project's pictures. `./uninstall.sh` takes `--tv`, `--non-interactive`, and `--help` too.
 
 ## Picture tips
 
@@ -86,7 +109,7 @@ LG's no-signal screen picks a random painting every 10 seconds, so it can show t
 
 **Is it a listener? Is it spying on me?** No. It's a short Python script, [`tv/shuffle.py`](tv/shuffle.py), that you can read yourself. It runs on the TV, uses no network at all, and opens no ports. The only thing it watches is the screensaver's own photo folder on the TV. When the TV opens a photo from that folder, the helper lines up the next one.
 
-To leave it out, install with `./install.sh --no-shuffle`. The no-signal screen then shows your photos in random order (LG's way), using up to 16 photos.
+To leave it out, add `--no-shuffle` when you install, for example `./install.sh --screensaver ~/Pictures/tv --no-shuffle`. The no-signal screen then shows your photos in random order (LG's way), using up to 16 photos.
 
 ## Good to know
 
