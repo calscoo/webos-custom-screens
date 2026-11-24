@@ -1,7 +1,7 @@
 #!/bin/sh
 # Runs on the TV. Puts this tool's pictures on three of LG's screens:
-#   - the screensaver after idle on the home screen or in an app
-#   - the art on the "no signal" screen of HDMI inputs
+#   - the screensaver after idle on the home screen or in an app (when photos/ has photos)
+#   - the art on the "no signal" screen of HDMI inputs (same photos)
 #   - the logo shown when the TV turns off (when logo/ has one)
 # Nothing in LG's files changes. Each screen is a bind mount, which "revert" removes.
 # Homebrew Channel runs this at every boot through /var/lib/webosbrew/init.d/50-webos-custom-screens.
@@ -42,15 +42,18 @@ if [ "$1" = revert ]; then
 fi
 
 set -- "$BASE"/photos/*.jpg
-if [ ! -f "$1" ]; then
-    echo "[-] No photos in $BASE/photos" >&2
+count=0
+[ -f "$1" ] && count=$#
+if [ "$count" -eq 0 ] && [ ! -f "$BASE/logo/LG_logo.png" ]; then
+    echo "[-] Nothing to show: no photos or logo in $BASE" >&2
     exit 1
 fi
-count=$#
 screens_on=0
 
 # Home and app screensaver
-if [ ! -f "$SAVER" ]; then
+if [ "$count" -eq 0 ]; then
+    : # no photos installed, so LG's screensaver stays
+elif [ ! -f "$SAVER" ]; then
     echo "[~] Skipped the home and app screensaver: this TV has no $SAVER"
 elif findmnt "$SAVER" >/dev/null 2>&1; then
     echo "[~] Skipped the home and app screensaver: another screensaver mod is active"
@@ -61,7 +64,9 @@ fi
 
 # No-signal art. LG's input app reads the fixed names modernart_0.jpg to modernart_15.jpg
 # from $ART and shows a random one every 10 seconds.
-if [ ! -d "$ART" ]; then
+if [ "$count" -eq 0 ]; then
+    : # no photos installed, so LG's art stays
+elif [ ! -d "$ART" ]; then
     echo "[~] Skipped the no-signal art: this TV has no $ART"
 elif findmnt "$ART" >/dev/null 2>&1; then
     echo "[~] Skipped the no-signal art: another mod replaces it"
@@ -69,7 +74,7 @@ else
     rm -rf "$SLOTS"
     mkdir -p "$SLOTS"
     i=0
-    if [ -f "$BASE/shuffle.py" ] && [ "$count" -gt 1 ]; then
+    if [ -f "$BASE/shuffle.py" ] && [ ! -f "$BASE/no-shuffle" ] && [ "$count" -gt 1 ]; then
         # All 16 names start on one photo. shuffle.py then moves them through the photos.
         while [ $i -lt 16 ]; do
             ln -f "$1" "$SLOTS/modernart_$i.jpg"

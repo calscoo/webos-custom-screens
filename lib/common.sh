@@ -10,22 +10,43 @@ TV_HOOK=/var/lib/webosbrew/init.d/50-webos-custom-screens
 # shellcheck disable=SC2034
 TESTED_WEBOS_MAJOR=8 # webOS 23
 
-if [ -t 1 ]; then
-    BOLD=$'\033[1m' RED=$'\033[31m' GREEN=$'\033[32m' YELLOW=$'\033[33m' RESET=$'\033[0m'
+# Colors only on a terminal, and never when NO_COLOR is set (no-color.org)
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    BOLD=$'\033[1m' DIM=$'\033[2m' RED=$'\033[31m' GREEN=$'\033[32m' YELLOW=$'\033[33m'
+    CYAN=$'\033[36m' RESET=$'\033[0m'
 else
-    BOLD="" RED="" GREEN="" YELLOW="" RESET=""
+    BOLD="" DIM="" RED="" GREEN="" YELLOW="" CYAN="" RESET=""
 fi
+# shellcheck disable=SC2034 # set by the scripts that source this file
+NONINTERACTIVE=no
+STEP_NUM=0
+STEP_TOTAL=0
 
-step() { printf '\n%s%s%s\n' "$BOLD" "$*" "$RESET"; }
-ok() { printf '%s✓%s %s\n' "$GREEN" "$RESET" "$*"; }
-warn() { printf '%s!%s %s\n' "$YELLOW" "$RESET" "$*" >&2; }
+# step "Title": a numbered heading, like "Step 2 of 4  Finding your TV"
+step() {
+    STEP_NUM=$((STEP_NUM + 1))
+    if [ "$STEP_TOTAL" -gt 0 ]; then
+        printf '\n%s%sStep %s of %s%s  %s%s%s\n' "$BOLD" "$CYAN" "$STEP_NUM" "$STEP_TOTAL" "$RESET" "$BOLD" "$*" "$RESET"
+    else
+        printf '\n%s%s%s\n' "$BOLD" "$*" "$RESET"
+    fi
+}
+info() { printf '  %s\n' "$*"; }
+note() { printf '  %s%s%s\n' "$DIM" "$*" "$RESET"; }
+ok() { printf '  %s✓%s %s\n' "$GREEN" "$RESET" "$*"; }
+warn() { printf '  %s!%s %s\n' "$YELLOW" "$RESET" "$*" >&2; }
 die() { printf '%s✗ %s%s\n' "$RED" "$*" "$RESET" >&2; exit 1; }
 
-# ask "Question?" Y|N: returns 0 for yes. Without a terminal it takes the default.
+# ask "Question?" Y|N: returns 0 for yes. --non-interactive answers yes. Without a terminal
+# it takes the default.
 ask() {
     local reply="" hint="[y/N]"
     [ "$2" = Y ] && hint="[Y/n]"
-    printf '%s %s ' "$1" "$hint"
+    if [ "$NONINTERACTIVE" = yes ]; then
+        printf '  %s%s%s %syes (--non-interactive)%s\n' "$BOLD" "$1" "$RESET" "$DIM" "$RESET"
+        return 0
+    fi
+    printf '  %s%s%s %s ' "$BOLD" "$1" "$RESET" "$hint"
     { read -r reply </dev/tty; } 2>/dev/null || echo
     case "${reply:-$2}" in
         [Yy]*) return 0 ;;
@@ -117,11 +138,11 @@ find_tv() {
         return
     fi
 
-    step "Looking for your TV..."
     local my_ip prefix found ip candidates="" others="" count=0
     my_ip=$(local_ip_for 1.1.1.1)
     [ -n "$my_ip" ] || die "Can't tell which network this computer is on. Run again with --tv <TV address>."
     prefix=${my_ip%.*}
+    info "Looking for rooted LG TVs on $prefix.x..."
     found=$(scan_network "$prefix")
 
     # A rooted webOS TV answers on Telnet and on LG's app connection port
@@ -143,25 +164,26 @@ find_tv() {
     if [ "$count" -eq 0 ]; then
         warn "No rooted LG TV found on $prefix.x."
         [ -n "$others" ] && warn "These might be LG TVs without root or with Telnet off: $others"
-        echo "Check that:"
-        echo "  - the TV is on and on the same network as this computer"
-        echo "  - the TV is rooted with Homebrew Channel (see https://cani.rootmy.tv/)"
-        echo "  - Telnet is on in Homebrew Channel's settings"
-        echo "Or run again with the TV's address: $0 --tv 192.168.1.50"
-        echo "(TV address: Settings > General > Network > Wi-Fi or Wired Connection > Advanced Settings)"
+        info "Check that:"
+        info "  - the TV is on and on the same network as this computer"
+        info "  - the TV is rooted with Homebrew Channel (see https://cani.rootmy.tv/)"
+        info "  - Telnet is on in Homebrew Channel's settings"
+        info "Or run again with the TV's address: $0 --tv 192.168.1.50"
+        note "(TV address: Settings > General > Network > Wi-Fi or Wired Connection > Advanced Settings)"
         exit 1
     fi
 
     local choice=1 n=0 entry
     if [ "$count" -gt 1 ]; then
-        echo "Found $count TVs:"
+        info "Found $count TVs:"
         while IFS= read -r entry; do
             [ -n "$entry" ] || continue
             n=$((n + 1))
             IFS='|' read -r ip TV_MODEL TV_VERSION <<<"$entry"
-            echo "  $n) $TV_MODEL (webOS $TV_VERSION) at $ip"
+            info "  $n) $TV_MODEL (webOS $TV_VERSION) at $ip"
         done <<<"$candidates"
-        printf 'Which one? [1-%s] ' "$count"
+        [ "$NONINTERACTIVE" = yes ] && die "Found $count TVs. Pick one with --tv <address>."
+        printf '  %sWhich one?%s [1-%s] ' "$BOLD" "$RESET" "$count"
         { read -r choice </dev/tty; } 2>/dev/null || echo
         case "$choice" in
             '' | *[!0-9]*) die "No TV picked." ;;
