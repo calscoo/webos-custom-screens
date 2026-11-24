@@ -81,11 +81,11 @@ To leave it out, install with `./install.sh --no-shuffle`. The no-signal screen 
 
 ## Tested on
 
-| TV | webOS | Result |
-| --- | --- | --- |
-| LG OLED42C3PUA (2023) | webOS 23 (8.1.0) | Both screens work |
+| TV | Software version | webOS TV version | Result |
+| --- | --- | --- | --- |
+| LG OLED42C3PUA (2023) | 03.11.45 | 8.1.0-47 (webOS 23) | Both screens work |
 
-Tried it on another TV? Please open an issue with your model, webOS version, and what worked.
+Tried it on another TV? Please open an issue with your model, software version, webOS TV version, and what worked. Both versions are in the TV's settings, under General > System > TV Information and Support > Software Update. Please leave out your serial number and MAC addresses.
 
 ## Troubleshooting
 
